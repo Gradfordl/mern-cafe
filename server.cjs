@@ -3,6 +3,7 @@ const express = require("express");
 const path = require("path");
 const favicon = require("serve-favicon");
 const logger = require("morgan");
+const ensureLoggedIn = require("./config/ensureLoggedIn.cjs")
 
 //connect to MongoDB (we connected to the db in database.cjs and here we are requiring the app to connect to db upon loading)
 require("./config/database.cjs")
@@ -31,6 +32,11 @@ const userRouter = require("./routes/api/users.cjs")
 //Router setup
 //if request begins with /api/users, direct to user router
 app.use("/api/users", userRouter)
+
+// ensureLoggedIn Middleware makes all /api/orders routed protected by login
+app.use("/api/orders", ensureLoggedIn , require("./routes/api/orders.cjs"))
+
+app.use("/api/items", ensureLoggedIn, require("./routes/api/items.cjs"))
 
 // The following "catch all" route (note the *) is necessary
 // to return the index.html on all non-AJAX requests
